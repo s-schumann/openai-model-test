@@ -1,0 +1,39 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Website</title>
+  </head>
+  <body>
+    <h1>Hello World</h1>
+    <form id="chat-form">
+      <input type="text" id="question" name="question">
+      <input type="submit" value="Ask">
+    </form>
+    
+    <div id="answer"></div>
+    
+    <script>
+      document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+      
+        const question = document.getElementById('question').value;
+      
+        fetch('/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ question })
+        })
+        .then(response => response.text())
+        .then(answer => {
+          document.getElementById('answer').innerHTML = answer;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      });
+    </script>
+  </body>
+</html>
