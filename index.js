@@ -11,8 +11,8 @@ app.post('/chat', (req, res) => {
   axios.post('https://api.openai.com/v1/completions', {
     model: "text-davinci-003",
     prompt: question,
-    max_tokens: 7, //100,
-    temperature: 0 //0.5
+    max_tokens: 2048,
+    temperature: 0.5
   }, {
     headers: {
       'Content-Type': 'application/json',
@@ -20,6 +20,7 @@ app.post('/chat', (req, res) => {
     }
   })
     .then(response => {
+      console.log(response.data.choices[0].text);
       res.send(response.data.choices[0].text);
     })
     .catch(error => {
@@ -34,6 +35,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
-
-
-
