@@ -20,6 +20,12 @@ spec:
         - name: openai-model-test
           image: mtr.devops.telekom.de/s_schumann/openai-model-test:main
           imagePullPolicy: Always
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-credentials
+                  key: api-token
           ports:
             - containerPort: 3000
               name: server-port
