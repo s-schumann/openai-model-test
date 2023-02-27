@@ -1,0 +1,16 @@
+stages:
+  - package
+#  - deploy
+
+package:
+  tags:
+    - otc_run_docker_s
+  stage: package
+  script:
+    - echo "$MTR_PASSWD" | docker login -u "$MTR_USER" --password-stdin ${MTR_ADDRESS}
+    - MTR_IMAGE_TAG="${MTR_ADDRESS}/${CI_PROJECT_NAME}:${CI_COMMIT_REF_SLUG}"
+    - docker version
+    - docker build --pull --label "git-sha=$CI_COMMIT_SHA" -t "$MTR_IMAGE_TAG" .
+    - docker push "$MTR_IMAGE_TAG"
+    - docker logout
+
