@@ -20,9 +20,7 @@ caas-deploy:
   stage: deploy
   image:
       name: mtr.devops.telekom.de/caas/ranchercli_kubectl
-  variables:
-      KUBECONFIG_FILE: KUBECONFIG_${CI_COMMIT_REF_SLUG}
   before_script:
-    - export KUBECONFIG=${!KUBECONFIG_FILE}
+    - export KUBECONFIG=${KUBECONFIG_FILE}
   script:
     - kubectl apply -f deployment.yml
