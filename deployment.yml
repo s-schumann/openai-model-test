@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: openai-model-test
+  name: openai-model-test
+  namespace: openai-model-test
+spec:
+  selector:
+    matchLabels:
+      app: openai-model-test
+  template:
+    metadata:
+      labels:
+        app: openai-model-test
+    spec:
+      imagePullSecrets:
+        - name: mtr-sschumann
+      containers:
+        - name: openai-model-test
+          image: mtr.devops.telekom.de/s_schumann/openai-model-test:main
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: server-port
+              protocol: TCP
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 200m
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {}
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openai-model-test-service
+  namespace: openai-model-test
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: server-port
+  selector:
+    app: openai-model-test
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openai-model-test-ingress
+  namespace: openai-model-test
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - nwi-openai-model-test.caas-t02.telekom.de
+  rules:
+  - host: nwi-openai-model-test.caas-t02.telekom.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: openai-model-test-service
+            port:
+              number: 80
+

@@ -24,5 +24,5 @@ caas-deploy:
       KUBECONFIG_FILE: KUBECONFIG_${CI_COMMIT_REF_SLUG}
   before_script:
     - export KUBECONFIG=${!KUBECONFIG_FILE}
-  rules:
-    - if: $CI_COMMIT_REF_NAME != "main"
+  script:
+    - kubectl apply -f deployment.yml
